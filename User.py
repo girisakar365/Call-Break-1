@@ -6,14 +6,9 @@ from Logic import bid_calculator, logic
 
 
 class User:
-    total_for_bot = 0  # total points of bot in a round
-    total_for_user = 0  # total points of user in a round
-
+    total = 0  # total points of bot in a round
     b_bid = 0  # bids of bot in a round
-
-    card_for_bot = None  # cards of bot
-    card_for_user = None  # cards of user
-
+    card = None  # cards of bot
     history = [[0, [], 0]]
 
     def __init__(self):
@@ -42,15 +37,14 @@ class User:
             self.all_cards.pop(self.all_cards.index(i))
 
         # to keep the track of selected cards of bot so as to display to for later!
-        User.card_for_bot = ' '.join(self.p1)
-        User.card_for_user = ' '.join(self.user.values())
+        User.card = ' '.join(self.p1)
 
     def bid(self):
         # Bid of user and bot is stored here
         # For now the bid for bot is selected randomly between 1 - 3.
         while True:
             try:
-                User.u_bid = int(input('Call a bid: '))
+                int(input('Call a bid: '))
 
             except ValueError:
                 print('Invalid option')
@@ -60,8 +54,6 @@ class User:
 
         self.bid_of_bot = bid_calculator(self.p1)
         User.b_bid = self.bid_of_bot
-
-        return User.u_bid
 
     def card_throw(self):
         '''
@@ -127,15 +119,14 @@ class User:
 
         self.track(card_index)  # run track method
         # remove the used card of user from main cards.
-        print(
-            f'''\nUser: {self.points.count('u')} / {self.u_bid}\n
-Bot: {self.points.count('b')} / {self.b_bid}\n''')
         self.user.pop(card_index)
 
     def track(self, index: int):
         '''
         if value of card thrown by user > value of card thrown by bot: append u in self.points
+
         elif value of card thrown by bot > value of card thrown by user: append b in self.points
+
         else: pass
         '''
 
@@ -152,32 +143,21 @@ Bot: {self.points.count('b')} / {self.b_bid}\n''')
     def result(self):
         '''
         if bid of bot == total number of b in self.points: append bid of bot in total
+
         elif bid of bot > total number of b in self.points: append - (bid of bot) in total
+
         elif bid of bot < total number of b in self.points:
             if bid of bot == total number of b in self.points + 1: append (bid of bot) + 0.1 in total
         '''
-
-        # for bot
         if self.bid_of_bot == self.points.count('b'):
-            User.total_for_bot += self.bid_of_bot
+            User.total += self.bid_of_bot
 
         elif self.bid_of_bot < self.points.count('b'):
-            User.total_for_bot += round(self.bid_of_bot + ((self.points.count('b') - self.bid_of_bot) / 10), 1)
+            User.total += self.bid_of_bot + \
+                          ((self.points.count('b') - self.bid_of_bot) / 10)
 
         elif self.bid_of_bot > self.points.count('b'):
-            User.total_for_bot -= self.bid_of_bot
-
-        # for user
-        if self.bid_of_bot == self.points.count('u'):
-            User.total_for_user += self.u_bid
-
-        elif self.u_bid < self.points.count('u'):
-            User.total_for_user += round(self.u_bid + ((self.points.count('u') - self.u_bid) / 10), 1)
-
-        elif self.u_bid > self.points.count('u'):
-            User.total_for_user -= self.u_bid
-
-        return
+            User.total -= self.bid_of_bot
 
 
 for i in range(int(input('Select rounds: '))):
@@ -192,11 +172,6 @@ for i in range(int(input('Select rounds: '))):
         user.take_input()
         print('----------------------------------------\n')
     user.result()
-    show_table(
-        (
-            ('User', user.u_bid, user.total_for_user, user.card_for_user),
-            ('Bot', user.bid_of_bot, user.total_for_bot, user.card_for_bot)
-        )
-    )
+    show_table(user.bid_of_bot, user.total, user.card)
     print(
         f'\n-------------------------------- end of round: {i + 1} -------------------------------------------\n')
