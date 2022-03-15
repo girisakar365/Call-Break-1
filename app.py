@@ -105,7 +105,7 @@ def play():
     # e.g> {"value": body.cards.index("QS")}
     # to play the card "QS"
     print(logic(played, cards, history))
-    return jsonify({"value": body['cards'].index(str(logic(played, cards, history)))})
+    return jsonify({"value": logic(played, cards, history)})
 
 
 # do not change this port; the sandbox server hits this port on localhost

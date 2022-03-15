@@ -255,4 +255,4 @@ def logic(played, cards, history):
             if play == '':
                 # If we don't have higher cards with same sign, we play the last card of the list, i.e. the lowest value card of same sign
                 play = cards_arranged[-1]
-    return play
+    return int(cards.index(play))
